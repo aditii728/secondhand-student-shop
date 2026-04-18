@@ -1,16 +1,32 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
 import "./App.css";
+import { CategorySection } from "./components/CategorySection";
+import { CtaBanner } from "./components/CtaBanner";
+import { FeaturedSection } from "./components/FeaturedSection";
+import { Header } from "./components/Header";
+import { HeroSection } from "./components/HeroSection";
+import { StepsSection } from "./components/StepsSection";
+import {
+  categories,
+  featuredItems,
+  heroMedia,
+  heroStats,
+  navigationLinks,
+  steps,
+} from "./data/homepageData";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <h2>Hello world 2</h2>
-    </>
+    <div className="app-shell" id="top">
+      <Header links={navigationLinks} />
+
+      <main className="homepage">
+        <HeroSection image={heroMedia} stats={heroStats} />
+        <CategorySection categories={categories} />
+        <FeaturedSection items={featuredItems} />
+        <StepsSection steps={steps} />
+        <CtaBanner />
+      </main>
+    </div>
   );
 }
 
