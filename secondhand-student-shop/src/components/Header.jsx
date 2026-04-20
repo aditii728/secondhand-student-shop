@@ -1,6 +1,6 @@
 import logo from "../assets/logo.png";
 
-export function Header({ links }) {
+export function Header({ activePage, onNavigate }) {
   return (
     <header className="topbar">
       <div className="brand-lockup">
@@ -14,11 +14,20 @@ export function Header({ links }) {
       </div>
 
       <nav className="topnav" aria-label="Primary navigation">
-        {links.map((link) => (
-          <a key={link.href} href={link.href}>
-            {link.label}
-          </a>
-        ))}
+        <button
+          className={`topnav-link ${activePage === "home" ? "topnav-link-active" : ""}`}
+          onClick={() => onNavigate("home")}
+          type="button"
+        >
+          Home
+        </button>
+        <button
+          className={`topnav-link ${activePage === "browse" ? "topnav-link-active" : ""}`}
+          onClick={() => onNavigate("browse")}
+          type="button"
+        >
+          Browse Listings
+        </button>
       </nav>
     </header>
   );
