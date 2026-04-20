@@ -1,0 +1,294 @@
+.homepage {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5rem;
+  padding-top: 2.5rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.85fr);
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero h2,
+.cta-banner h2 {
+  margin: 0;
+  color: var(--text-main);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.hero h2 {
+  max-width: 11ch;
+  font-size: clamp(2.4rem, 5.5vw, 4.6rem);
+}
+
+.hero-text,
+.info-card p,
+.step-card p,
+.hero-note p {
+  color: var(--text-soft);
+}
+
+.hero-text {
+  max-width: 42rem;
+  margin-top: 1rem;
+  font-size: 1.02rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 1.75rem;
+}
+
+.hero-panel,
+.info-card,
+.listing-card,
+.step-card,
+.cta-banner {
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: var(--surface);
+}
+
+.hero-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.4rem;
+}
+
+.hero-image-frame,
+.listing-image-frame {
+  overflow: hidden;
+  border-radius: 1rem;
+  background: #f4eefc;
+}
+
+.hero-image-frame {
+  aspect-ratio: 4 / 3;
+}
+
+.hero-image,
+.listing-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.hero-image {
+  object-position: center;
+}
+
+.hero-panel-block h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.panel-label {
+  margin: 0 0 0.55rem;
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hero-stat-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.stat-card {
+  padding: 0.85rem 0.8rem;
+  border-radius: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(104, 63, 158, 0.1);
+  text-align: center;
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--text-main);
+  font-size: 1.1rem;
+}
+
+.stat-card span {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.hero-note {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding-top: 0.25rem;
+}
+
+.info-grid,
+.listing-grid,
+.steps-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.info-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.listing-grid,
+.steps-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.info-card,
+.listing-card,
+.step-card {
+  padding: 1.25rem;
+}
+
+.listing-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.listing-image-frame {
+  aspect-ratio: 4 / 3;
+}
+
+.info-card h3,
+.listing-card h3,
+.step-card h3 {
+  margin: 0.9rem 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.listing-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.listing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+
+.listing-footer strong {
+  color: var(--text-main);
+  font-size: 1.35rem;
+}
+
+.listing-footer button {
+  min-height: 2.7rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.listing-footer button:hover {
+  border-color: rgba(106, 57, 170, 0.28);
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.cta-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.6rem;
+}
+
+.cta-banner > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cta-banner .button-link {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .hero,
+  .listing-grid,
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h2 {
+    max-width: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .homepage {
+    gap: 3.5rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .listing-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 540px) {
+  .hero h2 {
+    font-size: 2.2rem;
+  }
+
+  .hero-stat-list {
+    gap: 0.5rem;
+  }
+
+  .stat-card {
+    padding: 0.7rem 0.55rem;
+  }
+
+  .stat-card strong {
+    font-size: 1rem;
+  }
+
+  .stat-card span {
+    font-size: 0.74rem;
+  }
+}

@@ -1,20 +1,18 @@
-import { useState } from "react";
-import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import "./styles/shared.css";
 import { Header } from "./components/Header";
 import { BrowsePage } from "./pages/BrowsePage";
 import { HomePage } from "./pages/HomePage";
+import { ROUTES } from "./routes/paths";
 
 function App() {
-  const [activePage, setActivePage] = useState("home");
-
   return (
     <div className="app-shell" id="top">
-      <Header activePage={activePage} onNavigate={setActivePage} />
-      {activePage === "home" ? (
-        <HomePage onBrowse={() => setActivePage("browse")} />
-      ) : (
-        <BrowsePage />
-      )}
+      <Header />
+      <Routes>
+        <Route element={<HomePage />} path={ROUTES.home} />
+        <Route element={<BrowsePage />} path={ROUTES.browse} />
+      </Routes>
     </div>
   );
 }

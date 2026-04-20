@@ -47,7 +47,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/6958541/pexels-photo-6958541.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Open textbooks and notes on a study desk.",
     imagePosition: "center center",
-    imageScale: 1.12,
   },
   {
     id: "listing-2",
@@ -64,7 +63,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/5905437/pexels-photo-5905437.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "A study desk with notebooks and stationery.",
     imagePosition: "center center",
-    imageScale: 1.14,
   },
   {
     id: "listing-3",
@@ -81,7 +79,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/6238297/pexels-photo-6238297.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Scientific calculator on a desk.",
     imagePosition: "center 42%",
-    imageScale: 1.26,
   },
   {
     id: "listing-4",
@@ -98,7 +95,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/112811/pexels-photo-112811.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Desk lamp on a study table.",
     imagePosition: "center 38%",
-    imageScale: 1.3,
   },
   {
     id: "listing-5",
@@ -115,7 +111,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/6147002/pexels-photo-6147002.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Stacked notebooks and study notes.",
     imagePosition: "center center",
-    imageScale: 1.16,
   },
   {
     id: "listing-6",
@@ -132,7 +127,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/777001/pexels-photo-777001.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Computer monitor on a desk.",
     imagePosition: "center 35%",
-    imageScale: 1.24,
   },
   {
     id: "listing-7",
@@ -149,7 +143,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Kitchen utensils and bowls on a table.",
     imagePosition: "center 46%",
-    imageScale: 1.18,
   },
   {
     id: "listing-8",
@@ -166,7 +159,6 @@ export const browseListings = [
       "https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Black backpack placed on a chair.",
     imagePosition: "center 32%",
-    imageScale: 1.22,
   },
   {
     id: "listing-9",
@@ -183,6 +175,5 @@ export const browseListings = [
       "https://images.pexels.com/photos/5427664/pexels-photo-5427664.jpeg?auto=compress&cs=tinysrgb&w=900",
     alt: "Flashcards and notes on a desk.",
     imagePosition: "center 40%",
-    imageScale: 1.2,
   },
 ];

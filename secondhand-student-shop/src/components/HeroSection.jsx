@@ -1,6 +1,7 @@
+import { ROUTES } from "../routes/paths";
 import { ButtonLink } from "./ButtonLink";
 
-export function HeroSection({ stats, image, onBrowse }) {
+export function HeroSection({ stats, image }) {
   return (
     <section className="hero">
       <div className="hero-copy">
@@ -12,7 +13,7 @@ export function HeroSection({ stats, image, onBrowse }) {
         </p>
 
         <div className="hero-actions">
-          <ButtonLink onClick={onBrowse}>Browse listings</ButtonLink>
+          <ButtonLink to={ROUTES.browse}>Browse listings</ButtonLink>
           <ButtonLink href="#how-it-works" variant="secondary">
             Sell an item
           </ButtonLink>
