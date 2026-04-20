@@ -1,3 +1,4 @@
+import { ROUTES } from "../routes/paths";
 import { ButtonLink } from "./ButtonLink";
 
 export function HeroSection({ stats, image }) {
@@ -12,7 +13,7 @@ export function HeroSection({ stats, image }) {
         </p>
 
         <div className="hero-actions">
-          <ButtonLink href="#featured">Browse listings</ButtonLink>
+          <ButtonLink to={ROUTES.browse}>Browse listings</ButtonLink>
           <ButtonLink href="#how-it-works" variant="secondary">
             Sell an item
           </ButtonLink>

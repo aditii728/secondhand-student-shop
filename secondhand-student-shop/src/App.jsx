@@ -1,31 +1,18 @@
-import "./App.css";
-import { CategorySection } from "./components/CategorySection";
-import { CtaBanner } from "./components/CtaBanner";
-import { FeaturedSection } from "./components/FeaturedSection";
+import { Route, Routes } from "react-router-dom";
+import "./styles/shared.css";
 import { Header } from "./components/Header";
-import { HeroSection } from "./components/HeroSection";
-import { StepsSection } from "./components/StepsSection";
-import {
-  categories,
-  featuredItems,
-  heroMedia,
-  heroStats,
-  navigationLinks,
-  steps,
-} from "./data/homepageData";
+import { BrowsePage } from "./pages/BrowsePage";
+import { HomePage } from "./pages/HomePage";
+import { ROUTES } from "./routes/paths";
 
 function App() {
   return (
     <div className="app-shell" id="top">
-      <Header links={navigationLinks} />
-
-      <main className="homepage">
-        <HeroSection image={heroMedia} stats={heroStats} />
-        <CategorySection categories={categories} />
-        <FeaturedSection items={featuredItems} />
-        <StepsSection steps={steps} />
-        <CtaBanner />
-      </main>
+      <Header />
+      <Routes>
+        <Route element={<HomePage />} path={ROUTES.home} />
+        <Route element={<BrowsePage />} path={ROUTES.browse} />
+      </Routes>
     </div>
   );
 }

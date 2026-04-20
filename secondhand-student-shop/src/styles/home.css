@@ -1,62 +1,3 @@
-.app-shell {
-  padding: 1.5rem 0 4rem;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.brand-lockup {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.brand-logo-shell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4.1rem;
-  height: 4.1rem;
-  flex: 0 0 auto;
-  border-radius: 1.2rem;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid var(--line);
-  padding: 0.45rem;
-}
-
-.brand-logo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.brand-name {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.topnav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.topnav a {
-  color: var(--text-soft);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.topnav a:hover {
-  color: var(--text-main);
-}
-
 .homepage {
   display: flex;
   flex-direction: column;
@@ -77,17 +18,7 @@
   justify-content: center;
 }
 
-.eyebrow {
-  margin: 0 0 0.7rem;
-  color: var(--accent-strong);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .hero h2,
-.section-heading h2,
 .cta-banner h2 {
   margin: 0;
   color: var(--text-main);
@@ -101,7 +32,6 @@
 }
 
 .hero-text,
-.section-description,
 .info-card p,
 .step-card p,
 .hero-note p {
@@ -119,38 +49,6 @@
   flex-wrap: wrap;
   gap: 0.9rem;
   margin-top: 1.75rem;
-}
-
-.button-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3rem;
-  padding: 0 1.2rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
-}
-
-.button-link-primary {
-  background: var(--accent);
-  color: #ffffff;
-}
-
-.button-link-primary:hover {
-  background: var(--accent-strong);
-}
-
-.button-link-secondary {
-  border-color: var(--line);
-  background: var(--surface);
-  color: var(--text-main);
-}
-
-.button-link-secondary:hover {
-  border-color: rgba(106, 57, 170, 0.28);
 }
 
 .hero-panel,
@@ -241,33 +139,6 @@
   padding-top: 0.25rem;
 }
 
-.status-dot {
-  width: 0.7rem;
-  height: 0.7rem;
-  flex: 0 0 auto;
-  border-radius: 999px;
-  background: var(--accent);
-}
-
-.section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.4rem;
-}
-
-.section-heading {
-  max-width: 44rem;
-}
-
-.section-heading h2,
-.cta-banner h2 {
-  font-size: clamp(1.9rem, 4vw, 2.8rem);
-}
-
-.section-description {
-  margin-top: 0.7rem;
-}
-
 .info-grid,
 .listing-grid,
 .steps-grid {
@@ -294,35 +165,10 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 0.9rem;
-  border-color: rgba(112, 63, 177, 0.22);
-  box-shadow: 0 16px 36px rgba(90, 47, 153, 0.12);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
-}
-
-.listing-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(112, 63, 177, 0.34);
-  box-shadow: 0 22px 42px rgba(90, 47, 153, 0.16);
 }
 
 .listing-image-frame {
   aspect-ratio: 4 / 3;
-  border-radius: 1rem;
-  border: 1px solid rgba(112, 63, 177, 0.08);
-}
-
-.pill {
-  display: inline-flex;
-  padding: 0.32rem 0.7rem;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-  font-size: 0.76rem;
-  font-weight: 700;
 }
 
 .info-card h3,
@@ -338,17 +184,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.8rem;
-  padding: 0 0.25rem;
-}
-
-.listing-location {
-  color: var(--text-soft);
-  font-size: 0.92rem;
-}
-
-.listing-card h3 {
-  margin: 0 0.25rem;
-  font-size: 1.18rem;
 }
 
 .listing-footer {
@@ -356,28 +191,27 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: auto;
-  padding: 0.2rem 0.25rem 0.1rem;
+  margin-top: 1.1rem;
 }
 
 .listing-footer strong {
   color: var(--text-main);
-  font-size: 1.5rem;
+  font-size: 1.35rem;
 }
 
 .listing-footer button {
   min-height: 2.7rem;
   padding: 0 1rem;
   border-radius: 999px;
-  background: var(--accent);
-  border: 1px solid transparent;
-  color: #ffffff;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  color: var(--text-main);
   font-weight: 600;
   cursor: pointer;
 }
 
 .listing-footer button:hover {
-  background: var(--accent-strong);
+  border-color: rgba(106, 57, 170, 0.28);
 }
 
 .step-number {
@@ -423,11 +257,6 @@
 }
 
 @media (max-width: 720px) {
-  .topbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .homepage {
     gap: 3.5rem;
   }
@@ -443,20 +272,6 @@
 }
 
 @media (max-width: 540px) {
-  .app-shell {
-    padding-top: 1rem;
-  }
-
-  .brand-lockup {
-    align-items: flex-start;
-  }
-
-  .brand-logo-shell {
-    width: 3.4rem;
-    height: 3.4rem;
-    padding: 0.35rem;
-  }
-
   .hero h2 {
     font-size: 2.2rem;
   }

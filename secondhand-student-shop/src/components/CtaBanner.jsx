@@ -1,3 +1,4 @@
+import { ROUTES } from "../routes/paths";
 import { ButtonLink } from "./ButtonLink";
 
 export function CtaBanner() {
@@ -7,7 +8,7 @@ export function CtaBanner() {
         <p className="eyebrow">Get Started</p>
         <h2>Browse listings and find what you need for student life.</h2>
       </div>
-      <ButtonLink href="#featured">View listings</ButtonLink>
+      <ButtonLink to={ROUTES.browse}>View listings</ButtonLink>
     </section>
   );
 }
