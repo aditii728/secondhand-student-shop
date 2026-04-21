@@ -5,4 +5,6 @@ export const ROUTES = {
   sell: "/sell",
   saved: "/saved",
   myListings: "/my-listings",
+  cart: "/cart",
+  checkout: "/checkout",
 };

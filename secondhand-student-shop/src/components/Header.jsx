@@ -62,6 +62,15 @@ export function Header() {
         >
           My Listings
         </NavLink>
+
+        <NavLink
+          className={({ isActive }) =>
+            `topnav-link ${isActive ? "topnav-link-active" : ""}`
+          }
+          to={ROUTES.cart}
+        >
+          Cart
+        </NavLink>
       </nav>
     </header>
   );

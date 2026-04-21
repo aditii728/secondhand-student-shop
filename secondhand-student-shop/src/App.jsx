@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import "./styles/shared.css";
 import { Header } from "./components/Header";
 import { BrowsePage } from "./pages/BrowsePage";
+import { CartPage } from "./pages/CartPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
 import { HomePage } from "./pages/HomePage";
 import { ItemDetailsPage } from "./pages/ItemDetailsPage";
 import { MyListingsPage } from "./pages/MyListingsPage";
@@ -20,6 +22,8 @@ function App() {
         <Route element={<SellPage />} path={ROUTES.sell} />
         <Route element={<SavedItemsPage />} path={ROUTES.saved} />
         <Route element={<MyListingsPage />} path={ROUTES.myListings} />
+        <Route element={<CartPage />} path={ROUTES.cart} />
+        <Route element={<CheckoutPage />} path={ROUTES.checkout} />
       </Routes>
     </div>
   );

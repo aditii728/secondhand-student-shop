@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { browseListings } from "../data/browseData";
 import { ROUTES } from "../routes/paths";
 import "../styles/item-details.css";
+import { addItemToCart } from "../utils/cartStorage";
 
 export function ItemDetailsPage() {
   const { id } = useParams();
+  const [cartMessage, setCartMessage] = useState("");
 
   const listing = browseListings.find((item) => item.id === id);
 
@@ -21,6 +24,11 @@ export function ItemDetailsPage() {
         </section>
       </main>
     );
+  }
+
+  function handleAddToCart() {
+    addItemToCart(listing);
+    setCartMessage("Item added to cart.");
   }
 
   const relatedItems = browseListings
@@ -69,14 +77,30 @@ export function ItemDetailsPage() {
             </div>
           </div>
 
-<div className="item-action-row">
-  <button className="button-link button-link-primary" type="button">
-    Contact Seller
-  </button>
-  <Link className="button-link button-link-secondary" to={ROUTES.saved}>
-    Save Item
-  </Link>
-</div>
+          <div className="item-action-row">
+            <button className="button-link button-link-primary" type="button">
+              Contact Seller
+            </button>
+
+            <Link className="button-link button-link-secondary" to={ROUTES.saved}>
+              Save Item
+            </Link>
+
+            <button
+              className="button-link button-link-primary"
+              onClick={handleAddToCart}
+              type="button"
+            >
+              Add to Cart
+            </button>
+          </div>
+
+          {cartMessage ? (
+            <div className="item-cart-message">
+              <span>{cartMessage}</span>
+              <Link to={ROUTES.cart}>Go to Cart</Link>
+            </div>
+          ) : null}
 
           <Link className="item-back-link" to={ROUTES.browse}>
             ← Back to Browse Listings
@@ -96,7 +120,7 @@ export function ItemDetailsPage() {
           </p>
           <p>
             This is a front-end prototype for the student marketplace, so the
-            contact and save actions are currently UI placeholders for Version 1.
+            contact, cart, and save actions are currently UI placeholders for Version 1.
           </p>
         </div>
 
