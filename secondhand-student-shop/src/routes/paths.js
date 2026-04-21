@@ -4,4 +4,5 @@ export const ROUTES = {
   itemDetails: "/item/:id",
   sell: "/sell",
   saved: "/saved",
+  myListings: "/my-listings",
 };

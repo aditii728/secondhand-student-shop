@@ -53,6 +53,15 @@ export function Header() {
         >
           Saved Items
         </NavLink>
+
+        <NavLink
+          className={({ isActive }) =>
+            `topnav-link ${isActive ? "topnav-link-active" : ""}`
+          }
+          to={ROUTES.myListings}
+        >
+          My Listings
+        </NavLink>
       </nav>
     </header>
   );

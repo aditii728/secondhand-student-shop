@@ -165,11 +165,16 @@ export function SellPage() {
           </div>
 
           {submitted ? (
-            <div className="sell-success-banner">
-              Listing submitted in UI prototype mode. In Version 1, this demonstrates
-              the user flow before backend integration is added.
-            </div>
-          ) : null}
+  <div className="sell-success-banner">
+    <p>
+      Listing submitted in UI prototype mode. In Version 1, this demonstrates
+      the user flow before backend integration is added.
+    </p>
+    <Link className="sell-success-link" to={ROUTES.myListings}>
+      Go to My Listings
+    </Link>
+  </div>
+) : null}
         </form>
 
         <aside className="sell-preview-card">

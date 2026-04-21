@@ -220,3 +220,18 @@
     align-items: stretch;
   }
 }
+.sell-success-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.sell-success-banner p {
+  margin: 0;
+}
+
+.sell-success-link {
+  color: var(--accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}

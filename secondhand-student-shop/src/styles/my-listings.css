@@ -1,0 +1,199 @@
+.my-listings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 2.5rem;
+}
+
+.my-listings-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.my-listings-copy,
+.my-summary-card,
+.my-listing-card,
+.my-empty-state,
+.my-listings-toolbar {
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--surface);
+  box-shadow: 0 16px 34px rgba(90, 47, 153, 0.08);
+}
+
+.my-listings-copy,
+.my-listings-toolbar,
+.my-empty-state {
+  padding: 1.4rem;
+}
+
+.my-listings-copy h2,
+.my-empty-state h3,
+.my-listings-toolbar h3,
+.my-listing-card h3 {
+  margin: 0;
+  color: var(--text-main);
+  line-height: 1.05;
+}
+
+.my-listings-copy h2 {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+}
+
+.my-listings-text,
+.my-listing-meta,
+.my-empty-state p:last-of-type {
+  color: var(--text-soft);
+}
+
+.my-listings-text {
+  margin-top: 1rem;
+  max-width: 52rem;
+}
+
+.my-listings-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.my-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 1.1rem;
+}
+
+.my-summary-label {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.my-summary-card strong {
+  color: var(--text-main);
+  font-size: 1.25rem;
+}
+
+.my-listings-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.my-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.my-listing-card {
+  overflow: hidden;
+}
+
+.my-listing-image-shell {
+  background: #f4eefc;
+}
+
+.my-listing-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.my-listing-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+}
+
+.my-listing-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.my-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.my-status-active {
+  background: rgba(126, 201, 139, 0.2);
+  color: #236636;
+}
+
+.my-status-sold {
+  background: rgba(111, 94, 151, 0.16);
+  color: #5f468e;
+}
+
+.my-listing-meta {
+  margin: 0;
+}
+
+.my-listing-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.my-listing-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: auto;
+}
+
+.my-listing-footer strong {
+  color: var(--text-main);
+  font-size: 1.3rem;
+}
+
+.my-listing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.my-empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 42rem;
+}
+
+@media (max-width: 980px) {
+  .my-listings-hero,
+  .my-listings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .my-listings-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .my-listings-toolbar,
+  .my-listing-top,
+  .my-listing-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
