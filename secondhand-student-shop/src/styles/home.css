@@ -199,7 +199,10 @@
   font-size: 1.35rem;
 }
 
-.listing-footer button {
+.listing-action-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 2.7rem;
   padding: 0 1rem;
   border-radius: 999px;
@@ -207,11 +210,13 @@
   border: 1px solid var(--line);
   color: var(--text-main);
   font-weight: 600;
-  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
-.listing-footer button:hover {
+.listing-action-link:hover {
   border-color: rgba(106, 57, 170, 0.28);
+  transform: translateY(-1px);
 }
 
 .step-number {

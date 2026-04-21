@@ -4,15 +4,12 @@ import { CtaBanner } from "../components/CtaBanner";
 import { FeaturedSection } from "../components/FeaturedSection";
 import { HeroSection } from "../components/HeroSection";
 import { StepsSection } from "../components/StepsSection";
-import {
-  categories,
-  featuredItems,
-  heroMedia,
-  heroStats,
-  steps,
-} from "../data/homepageData";
+import { browseListings } from "../data/browseData";
+import { categories, heroMedia, heroStats, steps } from "../data/homepageData";
 
 export function HomePage() {
+  const featuredItems = browseListings.filter((item) => item.featured).slice(0, 3);
+
   return (
     <main className="homepage">
       <HeroSection image={heroMedia} stats={heroStats} />
