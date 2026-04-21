@@ -14,7 +14,7 @@ export function HeroSection({ stats, image }) {
 
         <div className="hero-actions">
           <ButtonLink to={ROUTES.browse}>Browse listings</ButtonLink>
-          <ButtonLink href="#how-it-works" variant="secondary">
+          <ButtonLink to={ROUTES.sell} variant="secondary">
             Sell an item
           </ButtonLink>
         </div>

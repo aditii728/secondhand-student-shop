@@ -26,6 +26,7 @@ export function Header() {
         >
           Home
         </NavLink>
+
         <NavLink
           className={({ isActive }) =>
             `topnav-link ${isActive ? "topnav-link-active" : ""}`
@@ -33,6 +34,15 @@ export function Header() {
           to={ROUTES.browse}
         >
           Browse Listings
+        </NavLink>
+
+        <NavLink
+          className={({ isActive }) =>
+            `topnav-link ${isActive ? "topnav-link-active" : ""}`
+          }
+          to={ROUTES.sell}
+        >
+          Sell Item
         </NavLink>
       </nav>
     </header>
