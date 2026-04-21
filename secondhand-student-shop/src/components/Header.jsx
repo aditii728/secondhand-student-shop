@@ -44,6 +44,15 @@ export function Header() {
         >
           Sell Item
         </NavLink>
+
+        <NavLink
+          className={({ isActive }) =>
+            `topnav-link ${isActive ? "topnav-link-active" : ""}`
+          }
+          to={ROUTES.saved}
+        >
+          Saved Items
+        </NavLink>
       </nav>
     </header>
   );

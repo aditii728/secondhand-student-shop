@@ -4,6 +4,7 @@ import { Header } from "./components/Header";
 import { BrowsePage } from "./pages/BrowsePage";
 import { HomePage } from "./pages/HomePage";
 import { ItemDetailsPage } from "./pages/ItemDetailsPage";
+import { SavedItemsPage } from "./pages/SavedItemsPage";
 import { SellPage } from "./pages/SellPage";
 import { ROUTES } from "./routes/paths";
 
@@ -16,6 +17,7 @@ function App() {
         <Route element={<BrowsePage />} path={ROUTES.browse} />
         <Route element={<ItemDetailsPage />} path={ROUTES.itemDetails} />
         <Route element={<SellPage />} path={ROUTES.sell} />
+        <Route element={<SavedItemsPage />} path={ROUTES.saved} />
       </Routes>
     </div>
   );

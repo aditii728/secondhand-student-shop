@@ -69,14 +69,14 @@ export function ItemDetailsPage() {
             </div>
           </div>
 
-          <div className="item-action-row">
-            <button className="button-link button-link-primary" type="button">
-              Contact Seller
-            </button>
-            <button className="button-link button-link-secondary" type="button">
-              Save Item
-            </button>
-          </div>
+<div className="item-action-row">
+  <button className="button-link button-link-primary" type="button">
+    Contact Seller
+  </button>
+  <Link className="button-link button-link-secondary" to={ROUTES.saved}>
+    Save Item
+  </Link>
+</div>
 
           <Link className="item-back-link" to={ROUTES.browse}>
             ← Back to Browse Listings
