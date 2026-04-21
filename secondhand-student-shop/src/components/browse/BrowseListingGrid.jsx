@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { formatPostedHours } from "../../utils/browseListings";
 
 function BrowseListingCard({ listing }) {
@@ -30,7 +31,9 @@ function BrowseListingCard({ listing }) {
 
         <div className="browse-listing-footer">
           <strong>£{listing.price}</strong>
-          <button type="button">View details</button>
+          <Link className="button-link button-link-primary" to={`/item/${listing.id}`}>
+            View details
+          </Link>
         </div>
       </div>
     </article>
