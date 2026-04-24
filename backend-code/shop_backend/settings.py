@@ -17,6 +17,16 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def parse_csv_env(name, default=None):
+    raw_value = os.environ.get(name, '')
+    parsed_values = [value.strip() for value in raw_value.split(',') if value.strip()]
+
+    if parsed_values:
+        return parsed_values
+
+    return default or []
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,20 +36,41 @@ SECRET_KEY = 'django-insecure-%3v$bdk_e=jgks+8#_79081)1^+*%_dtr-r74_nd=)df@$7rl7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-default_allowed_hosts = ['localhost', '127.0.0.1', '.vercel.app']
-allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in allowed_hosts_env.split(',')
-    if host.strip()
-] or default_allowed_hosts
+ALLOWED_HOSTS = parse_csv_env(
+    'ALLOWED_HOSTS',
+    ['localhost', '127.0.0.1', '.vercel.app'],
+)
+
+CSRF_TRUSTED_ORIGINS = parse_csv_env(
+    'CSRF_TRUSTED_ORIGINS',
+    [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+        'https://*.vercel.app',
+    ],
+)
+
+CORS_ALLOWED_ORIGINS = parse_csv_env(
+    'CORS_ALLOWED_ORIGINS',
+    [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ],
+)
+
+CORS_ALLOWED_ORIGIN_REGEXES = parse_csv_env(
+    'CORS_ALLOWED_ORIGIN_REGEXES',
+    [r'^https://.*\.vercel\.app$'],
+)
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +82,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -126,9 +158,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
