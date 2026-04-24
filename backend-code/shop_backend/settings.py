@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import parse_qsl, unquote, urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,6 +26,58 @@ def parse_csv_env(name, default=None):
         return parsed_values
 
     return default or []
+
+
+def parse_bool_env(name, default=False):
+    return os.environ.get(name, str(default)).lower() == 'true'
+
+
+def get_database_config():
+    database_url = (
+        os.environ.get('DATABASE_URL')
+        or os.environ.get('POSTGRES_URL')
+    )
+
+    conn_max_age = int(os.environ.get('DB_CONN_MAX_AGE', '60'))
+    conn_health_checks = parse_bool_env('DB_CONN_HEALTH_CHECKS', True)
+
+    if database_url:
+        parsed = urlparse(database_url)
+        options = dict(parse_qsl(parsed.query))
+
+        return {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': unquote(parsed.path.lstrip('/')),
+            'USER': unquote(parsed.username or ''),
+            'PASSWORD': unquote(parsed.password or ''),
+            'HOST': parsed.hostname or '',
+            'PORT': str(parsed.port or ''),
+            'CONN_MAX_AGE': conn_max_age,
+            'CONN_HEALTH_CHECKS': conn_health_checks,
+            'OPTIONS': options,
+        }
+
+    db_name = os.environ.get('DB_NAME') or os.environ.get('POSTGRES_DB')
+    if db_name:
+        sslmode = os.environ.get('DB_SSLMODE', '')
+        options = {'sslmode': sslmode} if sslmode else {}
+
+        return {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_name,
+            'USER': os.environ.get('DB_USER') or os.environ.get('POSTGRES_USER', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD') or os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'CONN_MAX_AGE': conn_max_age,
+            'CONN_HEALTH_CHECKS': conn_health_checks,
+            'OPTIONS': options,
+        }
+
+    return {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 
 
 # Quick-start development settings - unsuitable for production
@@ -115,12 +168,7 @@ WSGI_APPLICATION = 'shop_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {'default': get_database_config()}
 
 
 # Password validation
