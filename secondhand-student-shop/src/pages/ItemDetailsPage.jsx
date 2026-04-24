@@ -1,12 +1,52 @@
+import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { browseListings } from "../data/browseData";
+import { useListings } from "../hooks/useListings";
 import { ROUTES } from "../routes/paths";
 import "../styles/item-details.css";
 
 export function ItemDetailsPage() {
   const { id } = useParams();
+  const { listings, isLoading, error } = useListings();
 
-  const listing = browseListings.find((item) => item.id === id);
+  const listing = useMemo(
+    () => listings.find((item) => item.id === id),
+    [id, listings],
+  );
+
+  const relatedItems = useMemo(
+    () =>
+      listings
+        .filter((item) => item.category === listing?.category && item.id !== listing?.id)
+        .slice(0, 3),
+    [listing, listings],
+  );
+
+  if (isLoading) {
+    return (
+      <main className="item-details-page">
+        <section className="item-details-empty">
+          <p className="eyebrow">Loading</p>
+          <h2>Loading item details...</h2>
+          <p>Fetching the latest listing information from the backend API.</p>
+        </section>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="item-details-page">
+        <section className="item-details-empty">
+          <p className="eyebrow">Unavailable</p>
+          <h2>We could not load this listing.</h2>
+          <p>{error}</p>
+          <Link className="button-link button-link-primary" to={ROUTES.browse}>
+            Back to browse
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   if (!listing) {
     return (
@@ -23,20 +63,11 @@ export function ItemDetailsPage() {
     );
   }
 
-  const relatedItems = browseListings
-    .filter((item) => item.category === listing.category && item.id !== listing.id)
-    .slice(0, 3);
-
   return (
     <main className="item-details-page">
       <section className="item-details-hero">
         <div className="item-details-media-card">
-          <img
-            alt={listing.alt}
-            className="item-details-image"
-            src={listing.image}
-            style={{ objectPosition: listing.imagePosition || "center center" }}
-          />
+          <img alt={listing.alt} className="item-details-image" src={listing.image} />
         </div>
 
         <div className="item-details-summary">
@@ -48,7 +79,7 @@ export function ItemDetailsPage() {
           </div>
 
           <h1>{listing.title}</h1>
-          <p className="item-details-price">£{listing.price}</p>
+          <p className="item-details-price">{listing.priceLabel}</p>
 
           <div className="item-details-meta-grid">
             <div className="item-meta-card">
@@ -65,7 +96,9 @@ export function ItemDetailsPage() {
             </div>
             <div className="item-meta-card">
               <span className="item-meta-label">Posted</span>
-              <strong>{listing.postedHours} hours ago</strong>
+              <strong>
+                {listing.postedHours} {listing.postedHours === 1 ? "hour" : "hours"} ago
+              </strong>
             </div>
           </div>
 
@@ -88,15 +121,11 @@ export function ItemDetailsPage() {
         <div className="item-description-card">
           <p className="eyebrow">Item overview</p>
           <h2>About this listing</h2>
+          <p>{listing.description}</p>
           <p>
-            This student listing is available for campus pickup and has been added
-            to help other students access useful secondhand items at affordable
-            prices. The seller has marked the item as <strong>{listing.condition}</strong>,
-            and pickup is arranged at <strong>{listing.pickup}</strong>.
-          </p>
-          <p>
-            This is a front-end prototype for the student marketplace, so the
-            contact and save actions are currently UI placeholders for Version 1.
+            The seller has marked the item as <strong>{listing.condition}</strong>,
+            and pickup is arranged at <strong>{listing.pickup}</strong>. Contact and
+            save actions are still UI placeholders for Sprint 1.
           </p>
         </div>
 
@@ -125,35 +154,34 @@ export function ItemDetailsPage() {
           </p>
         </div>
 
-        <div className="item-related-grid">
-          {relatedItems.map((item) => (
-            <article className="item-related-card" key={item.id}>
-              <div className="item-related-image-shell">
-                <img
-                  alt={item.alt}
-                  className="item-related-image"
-                  src={item.image}
-                  style={{ objectPosition: item.imagePosition || "center center" }}
-                />
-              </div>
-
-              <div className="item-related-body">
-                <span className="pill">{item.categoryLabel}</span>
-                <h3>{item.title}</h3>
-                <p className="item-related-meta">
-                  {item.condition} condition · {item.pickup}
-                </p>
-
-                <div className="item-related-footer">
-                  <strong>£{item.price}</strong>
-                  <Link className="button-link button-link-secondary" to={`/item/${item.id}`}>
-                    View item
-                  </Link>
+        {relatedItems.length === 0 ? (
+          <p>No related listings are available right now.</p>
+        ) : (
+          <div className="item-related-grid">
+            {relatedItems.map((item) => (
+              <article className="item-related-card" key={item.id}>
+                <div className="item-related-image-shell">
+                  <img alt={item.alt} className="item-related-image" src={item.image} />
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+
+                <div className="item-related-body">
+                  <span className="pill">{item.categoryLabel}</span>
+                  <h3>{item.title}</h3>
+                  <p className="item-related-meta">
+                    {item.condition} condition · {item.pickup}
+                  </p>
+
+                  <div className="item-related-footer">
+                    <strong>{item.priceLabel}</strong>
+                    <Link className="button-link button-link-secondary" to={`/item/${item.id}`}>
+                      View item
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

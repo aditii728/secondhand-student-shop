@@ -17,6 +17,7 @@ def serialize_listing(request, listing):
             "id": listing.category.id,
             "name": listing.category.name,
             "slug": listing.category.slug,
+            "description": listing.category.description,
         },
         "seller": {
             "id": listing.seller_id,

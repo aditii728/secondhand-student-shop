@@ -50,7 +50,27 @@ function BrowseEmptyState() {
   );
 }
 
-export function BrowseListingGrid({ listings }) {
+export function BrowseListingGrid({ listings, isLoading, error }) {
+  if (isLoading) {
+    return (
+      <div className="browse-empty-state">
+        <p className="eyebrow">Loading</p>
+        <h3>Loading listings...</h3>
+        <p>Fetching the latest items from the backend API.</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="browse-empty-state">
+        <p className="eyebrow">Unavailable</p>
+        <h3>We could not load listings.</h3>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   if (listings.length === 0) {
     return <BrowseEmptyState />;
   }
