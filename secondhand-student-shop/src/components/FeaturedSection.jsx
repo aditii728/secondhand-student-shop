@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { SectionHeading } from "./SectionHeading";
 
 function ListingCard({ item }) {
@@ -13,14 +14,16 @@ function ListingCard({ item }) {
       </div>
       <h3>{item.title}</h3>
       <div className="listing-footer">
-        <strong>{item.price}</strong>
-        <button type="button">View item</button>
+        <strong>{item.priceLabel}</strong>
+        <Link className="button-link button-link-secondary" to={`/item/${item.id}`}>
+          View item
+        </Link>
       </div>
     </article>
   );
 }
 
-export function FeaturedSection({ items }) {
+export function FeaturedSection({ items, isLoading, error }) {
   return (
     <section className="section" id="featured">
       <SectionHeading
@@ -29,11 +32,16 @@ export function FeaturedSection({ items }) {
         description="A selection of practical items for student life."
       />
 
-      <div className="listing-grid">
-        {items.map((item) => (
-          <ListingCard item={item} key={item.title} />
-        ))}
-      </div>
+      {isLoading ? <p>Loading featured listings...</p> : null}
+      {error ? <p>{error}</p> : null}
+
+      {!isLoading && !error ? (
+        <div className="listing-grid">
+          {items.map((item) => (
+            <ListingCard item={item} key={item.id} />
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }
