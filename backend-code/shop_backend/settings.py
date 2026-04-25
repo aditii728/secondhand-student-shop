@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urlparse
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -246,13 +248,43 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USE_CLOUDINARY = parse_bool_env('USE_CLOUDINARY', False)
 
 if USE_CLOUDINARY:
+    cloudinary_cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
+    cloudinary_api_key = os.environ.get('CLOUDINARY_API_KEY')
+    cloudinary_api_secret = os.environ.get('CLOUDINARY_API_SECRET')
+
+    missing_cloudinary_settings = [
+        name
+        for name, value in (
+            ('CLOUDINARY_CLOUD_NAME', cloudinary_cloud_name),
+            ('CLOUDINARY_API_KEY', cloudinary_api_key),
+            ('CLOUDINARY_API_SECRET', cloudinary_api_secret),
+        )
+        if not value
+    ]
+
+    if missing_cloudinary_settings:
+        raise ImproperlyConfigured(
+            'USE_CLOUDINARY is enabled but these settings are missing: '
+            + ', '.join(missing_cloudinary_settings)
+        )
+
     INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': cloudinary_cloud_name,
+        'API_KEY': cloudinary_api_key,
+        'API_SECRET': cloudinary_api_secret,
+        'SECURE': True,
+    }
+    STORAGES = {
+        'default': {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    }
 
     import cloudinary
 
     cloudinary.config(
-        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        api_key=os.environ.get('CLOUDINARY_API_KEY'),
-        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+        cloud_name=cloudinary_cloud_name,
+        api_key=cloudinary_api_key,
+        api_secret=cloudinary_api_secret,
+        secure=True,
     )
