@@ -13,6 +13,15 @@ function getActiveStorage() {
   return mode === "local" ? window.localStorage : window.sessionStorage;
 }
 
+function decodeTokenPayload(token) {
+  try {
+    const [, payload] = token.split(".");
+    return JSON.parse(window.atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+  } catch {
+    return null;
+  }
+}
+
 async function parseResponse(response, fallbackMessage) {
   const data = await response.json().catch(() => ({}));
 
@@ -59,6 +68,18 @@ export async function fetchCurrentUser(accessToken) {
   return parseResponse(response, `Unable to fetch current user (${response.status})`);
 }
 
+export async function refreshAccessToken(refreshToken) {
+  const response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ refresh: refreshToken }),
+  });
+
+  return parseResponse(response, `Unable to refresh session (${response.status})`);
+}
+
 export function persistAuthSession({ tokens, user, rememberMe }) {
   const targetStorage = getStorage(rememberMe);
   const otherStorage = rememberMe ? window.sessionStorage : window.localStorage;
@@ -79,6 +100,10 @@ export function getStoredAccessToken() {
   return getActiveStorage().getItem(ACCESS_TOKEN_KEY);
 }
 
+export function getStoredRefreshToken() {
+  return getActiveStorage().getItem(REFRESH_TOKEN_KEY);
+}
+
 export function getStoredUser() {
   const rawUser = getActiveStorage().getItem(USER_KEY);
   if (!rawUser) {
@@ -90,6 +115,29 @@ export function getStoredUser() {
   } catch {
     return null;
   }
+}
+
+export function updateStoredTokens(tokens) {
+  const storage = getActiveStorage();
+  storage.setItem(ACCESS_TOKEN_KEY, tokens.access);
+  storage.setItem(REFRESH_TOKEN_KEY, tokens.refresh);
+}
+
+export function updateStoredUser(user) {
+  getActiveStorage().setItem(USER_KEY, JSON.stringify(user));
+}
+
+export function getAccessTokenExpiry(accessToken) {
+  const payload = decodeTokenPayload(accessToken);
+  return payload?.exp ? payload.exp * 1000 : null;
+}
+
+export function isTokenExpired(accessToken, bufferMs = 0) {
+  const expiry = getAccessTokenExpiry(accessToken);
+  if (!expiry) {
+    return true;
+  }
+  return Date.now() + bufferMs >= expiry;
 }
 
 export function clearAuthSession() {

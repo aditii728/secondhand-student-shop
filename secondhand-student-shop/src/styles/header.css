@@ -76,11 +76,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.55rem;
 }
 
 .topnav-link-cta.topnav-link-active {
   background: var(--accent-soft);
   border-color: rgba(106, 57, 170, 0.22);
+}
+
+.topnav-link-button {
+  font: inherit;
+}
+
+.topnav-avatar {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #174c7a, #4aa3d1);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 720px) {

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { signupUser } from "../api/auth";
+import { useAuth } from "../hooks/useAuth";
 import { ROUTES } from "../routes/paths";
 import "../styles/signup.css";
 
@@ -54,12 +55,17 @@ function validateSignupForm(formData) {
 }
 
 export function SignupPage() {
+  const { isAuthenticated, isAuthReady } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (isAuthReady && isAuthenticated) {
+    return <Navigate replace to={ROUTES.profile} />;
+  }
 
   function handleChange(event) {
     const { name, type, value, checked } = event.target;

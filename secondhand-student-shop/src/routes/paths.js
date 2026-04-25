@@ -3,5 +3,6 @@ export const ROUTES = {
   browse: "/browse",
   login: "/login",
   signup: "/signup",
+  profile: "/profile",
   itemDetails: "/item/:id",
 };
