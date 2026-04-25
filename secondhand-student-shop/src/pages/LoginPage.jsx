@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser, persistAuthSession } from "../api/auth";
 import { ROUTES } from "../routes/paths";
 import "../styles/login.css";
 
@@ -16,17 +17,16 @@ function validateLoginForm(formData) {
     errors.identifier = "Enter your username or email address.";
   }
 
-  if (formData.password.length < 8) {
-    errors.password = "Password must be at least 8 characters long.";
-  }
-
   return errors;
 }
 
 export function LoginPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitMessage, setSubmitMessage] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange(event) {
     const { name, type, value, checked } = event.target;
@@ -49,9 +49,13 @@ export function LoginPage() {
     if (submitMessage) {
       setSubmitMessage("");
     }
+
+    if (submitError) {
+      setSubmitError("");
+    }
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const nextErrors = validateLoginForm(formData);
@@ -59,10 +63,38 @@ export function LoginPage() {
 
     if (Object.keys(nextErrors).length > 0) {
       setSubmitMessage("");
+      setSubmitError("");
       return;
     }
 
-    setSubmitMessage("Credentials look valid. Authentication can be connected next.");
+    setIsSubmitting(true);
+    setSubmitMessage("");
+    setSubmitError("");
+
+    try {
+      const response = await loginUser({
+        identifier: formData.identifier.trim(),
+        password: formData.password,
+      });
+
+      persistAuthSession({
+        tokens: response.tokens,
+        user: response.user,
+        rememberMe: formData.rememberMe,
+      });
+
+      setSubmitMessage(response.message || "Logged in successfully.");
+      setErrors({});
+
+      window.setTimeout(() => {
+        navigate(ROUTES.home);
+      }, 700);
+    } catch (error) {
+      setSubmitError(error.message || "Login failed.");
+      setErrors(error.fieldErrors || {});
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -119,10 +151,11 @@ export function LoginPage() {
               </button>
             </div>
 
-            <button className="button-link button-link-primary login-submit" type="submit">
-              Log in
+            <button className="button-link button-link-primary login-submit" disabled={isSubmitting} type="submit">
+              {isSubmitting ? "Logging in..." : "Log in"}
             </button>
 
+            {submitError ? <p className="login-error">{submitError}</p> : null}
             {submitMessage ? <p className="login-success">{submitMessage}</p> : null}
           </form>
 
