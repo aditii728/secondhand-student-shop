@@ -3,10 +3,12 @@ import json
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+
+from .models import UserProfile
 
 User = get_user_model()
 
@@ -86,17 +88,31 @@ def signup(request):
 
     first_name, last_name = split_full_name(full_name)
 
-    with transaction.atomic():
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-        )
-        user.profile.phone_number = normalized_phone_number
-        user.profile.university = university
-        user.profile.save(update_fields=["phone_number", "university", "updated_at"])
+    try:
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+            profile.phone_number = normalized_phone_number
+            profile.university = university
+            profile.save(update_fields=["phone_number", "university", "updated_at"])
+    except IntegrityError:
+        if User.objects.filter(username__iexact=username).exists():
+            errors["username"] = "That username is already taken."
+        if User.objects.filter(email__iexact=email).exists():
+            errors["email"] = "That email is already registered."
+
+        if errors:
+            return JsonResponse(
+                {"message": "Please correct the highlighted fields.", "errors": errors},
+                status=400,
+            )
+        raise
 
     return JsonResponse(
         {
@@ -106,8 +122,8 @@ def signup(request):
                 "username": user.username,
                 "full_name": user.get_full_name().strip() or user.username,
                 "email": user.email,
-                "phone_number": user.profile.phone_number,
-                "university": user.profile.university,
+                "phone_number": profile.phone_number,
+                "university": profile.university,
             },
         },
         status=201,
