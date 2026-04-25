@@ -34,6 +34,14 @@ export function Header() {
         >
           Browse Listings
         </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
+          }
+          to={ROUTES.signup}
+        >
+          Sign Up
+        </NavLink>
       </nav>
     </header>
   );
