@@ -17,6 +17,12 @@ class UserProfileInline(admin.StackedInline):
 class UserAdmin(BaseUserAdmin):
     inlines = (UserProfileInline,)
 
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        user = self.get_object(request, object_id)
+        if user is not None:
+            UserProfile.objects.get_or_create(user=user)
+        return super().change_view(request, object_id, form_url, extra_context)
+
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
