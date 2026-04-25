@@ -3,6 +3,13 @@
 ## Environment
 
 For local development, the frontend defaults to `/api` and uses the Vite proxy.
+This repo now includes a local-only [`.env.local`](./.env.local) with:
+
+```bash
+VITE_BACKEND_URL=http://127.0.0.1:8000
+```
+
+That lets the Vite dev server proxy `/api` and `/media` requests to the local Django backend.
 
 For deployed environments such as Vercel, set:
 
@@ -18,6 +25,8 @@ See [`.env.example`](./.env.example) for the expected format.
 npm install
 npm run dev
 ```
+
+Run the Django backend separately on `http://127.0.0.1:8000` while the frontend is running.
 
 ## Build
 

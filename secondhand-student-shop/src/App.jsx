@@ -4,6 +4,7 @@ import { Header } from "./components/Header";
 import { BrowsePage } from "./pages/BrowsePage";
 import { HomePage } from "./pages/HomePage";
 import { ItemDetailsPage } from "./pages/ItemDetailsPage";
+import { SignupPage } from "./pages/SignupPage";
 import { ROUTES } from "./routes/paths";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route element={<HomePage />} path={ROUTES.home} />
         <Route element={<BrowsePage />} path={ROUTES.browse} />
+        <Route element={<SignupPage />} path={ROUTES.signup} />
         <Route element={<ItemDetailsPage />} path={ROUTES.itemDetails} />
       </Routes>
     </div>

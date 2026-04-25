@@ -18,6 +18,27 @@ from urllib.parse import parse_qsl, unquote, urlparse
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def load_env_file(env_path):
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text().splitlines():
+        line = raw_line.strip()
+
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+
+        key, value = line.split('=', 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+load_env_file(BASE_DIR / '.env')
+
+
 def parse_csv_env(name, default=None):
     raw_value = os.environ.get(name, '')
     parsed_values = [value.strip() for value in raw_value.split(',') if value.strip()]
@@ -84,7 +105,10 @@ def get_database_config():
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%3v$bdk_e=jgks+8#_79081)1^+*%_dtr-r74_nd=)df@$7rl7'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-%3v$bdk_e=jgks+8#_79081)1^+*%_dtr-r74_nd=)df@$7rl7',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
@@ -219,14 +243,16 @@ CSRF_COOKIE_SECURE = not DEBUG
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
+USE_CLOUDINARY = parse_bool_env('USE_CLOUDINARY', False)
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+if USE_CLOUDINARY:
+    INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-import cloudinary
+    import cloudinary
 
-cloudinary.config(
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key = os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret = os.environ.get("CLOUDINARY_API_SECRET"),
-)
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+    )
