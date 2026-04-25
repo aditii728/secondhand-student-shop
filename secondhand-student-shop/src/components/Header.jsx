@@ -57,6 +57,22 @@ export function Header() {
           <>
             <NavLink
               className={({ isActive }) =>
+                `topnav-link ${isActive ? "topnav-link-active" : ""}`
+              }
+              to={ROUTES.listItem}
+            >
+              List Item
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `topnav-link ${isActive ? "topnav-link-active" : ""}`
+              }
+              to={ROUTES.myItems}
+            >
+              My Items
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
                 `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
               }
               to={ROUTES.profile}

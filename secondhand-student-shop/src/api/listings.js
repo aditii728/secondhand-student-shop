@@ -63,6 +63,8 @@ export function mapListingFromApi(listing) {
     priceLabel: formatPrice(price),
     condition: listing.condition,
     pickup: listing.pickup_location,
+    sellerId: listing.seller?.id ? String(listing.seller.id) : "",
+    sellerUsername: listing.seller?.username || "",
     seller: listing.seller?.name || "Student seller",
     postedHours: getPostedHours(listing.created_at),
     featured: Boolean(listing.is_featured),
@@ -76,6 +78,18 @@ export function mapListingFromApi(listing) {
   };
 }
 
+async function parseResponse(response, fallbackMessage) {
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const error = new Error(data.message || fallbackMessage || `Request failed (${response.status})`);
+    error.fieldErrors = data.errors || {};
+    throw error;
+  }
+
+  return data;
+}
+
 export async function fetchListings({ signal } = {}) {
   const response = await fetch(`${API_BASE_URL}/items/`, { signal });
 
@@ -85,6 +99,49 @@ export async function fetchListings({ signal } = {}) {
 
   const payload = await response.json();
   return (payload.items || []).map(mapListingFromApi);
+}
+
+export async function fetchCategories({ signal } = {}) {
+  const response = await fetch(`${API_BASE_URL}/categories/`, { signal });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load categories (${response.status})`);
+  }
+
+  const payload = await response.json();
+  return payload.items || [];
+}
+
+export async function createListing({ accessToken, payload }) {
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") {
+      return;
+    }
+    formData.append(key, value);
+  });
+
+  const response = await fetch(`${API_BASE_URL}/items/create/`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: formData,
+  });
+
+  const data = await parseResponse(response, `Failed to create listing (${response.status})`);
+  return mapListingFromApi(data.item);
+}
+
+export async function deleteListing({ accessToken, listingId }) {
+  const response = await fetch(`${API_BASE_URL}/items/${listingId}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return parseResponse(response, `Failed to remove listing (${response.status})`);
 }
 
 export function buildBrowseCategories(listings) {

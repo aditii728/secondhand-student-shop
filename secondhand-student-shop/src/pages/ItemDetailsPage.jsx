@@ -1,12 +1,17 @@
-import { useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { deleteListing } from "../api/listings";
+import { useAuth } from "../hooks/useAuth";
 import { useListings } from "../hooks/useListings";
 import { ROUTES } from "../routes/paths";
 import "../styles/item-details.css";
 
 export function ItemDetailsPage() {
+  const { accessToken, currentUser, isAuthenticated, refreshSession } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams();
-  const { listings, isLoading, error } = useListings();
+  const { listings, isLoading, error, removeListing } = useListings();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const listing = useMemo(
     () => listings.find((item) => item.id === id),
@@ -20,6 +25,32 @@ export function ItemDetailsPage() {
         .slice(0, 3),
     [listing, listings],
   );
+
+  const canDeleteListing =
+    isAuthenticated && currentUser && listing && listing.sellerId === String(currentUser.id);
+
+  async function handleDeleteListing() {
+    if (!listing) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      let token = accessToken;
+      if (!token) {
+        token = await refreshSession();
+      }
+
+      await deleteListing({ accessToken: token, listingId: listing.id });
+      removeListing(listing.id);
+      navigate(ROUTES.browse);
+    } catch (deleteError) {
+      window.alert(deleteError.message || "Could not remove listing.");
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -109,6 +140,11 @@ export function ItemDetailsPage() {
             <button className="button-link button-link-secondary" type="button">
               Save Item
             </button>
+            {canDeleteListing ? (
+              <button className="button-link button-link-secondary" disabled={isDeleting} onClick={handleDeleteListing} type="button">
+                {isDeleting ? "Removing..." : "Remove listing"}
+              </button>
+            ) : null}
           </div>
 
           <Link className="item-back-link" to={ROUTES.browse}>

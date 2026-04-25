@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { formatPostedHours } from "../../utils/browseListings";
 
-function BrowseListingCard({ listing }) {
+function BrowseListingCard({ listing, canDelete, onDelete, deletingId }) {
   return (
     <article className="browse-listing-card">
       <div className="browse-listing-image-frame">
@@ -31,9 +31,21 @@ function BrowseListingCard({ listing }) {
 
         <div className="browse-listing-footer">
           <strong>£{listing.price}</strong>
-          <Link className="button-link button-link-primary" to={`/item/${listing.id}`}>
-            View details
-          </Link>
+          <div className="browse-listing-actions">
+            <Link className="button-link button-link-primary" to={`/item/${listing.id}`}>
+              View details
+            </Link>
+            {canDelete ? (
+              <button
+                className="button-link button-link-secondary"
+                disabled={deletingId === listing.id}
+                onClick={() => onDelete(listing)}
+                type="button"
+              >
+                {deletingId === listing.id ? "Removing..." : "Remove"}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
     </article>
@@ -50,7 +62,7 @@ function BrowseEmptyState() {
   );
 }
 
-export function BrowseListingGrid({ listings, isLoading, error }) {
+export function BrowseListingGrid({ listings, isLoading, error, canDeleteListing, deletingId, onDeleteListing }) {
   if (isLoading) {
     return (
       <div className="browse-empty-state">
@@ -78,7 +90,13 @@ export function BrowseListingGrid({ listings, isLoading, error }) {
   return (
     <div className="browse-listing-grid">
       {listings.map((listing) => (
-        <BrowseListingCard key={listing.id} listing={listing} />
+        <BrowseListingCard
+          canDelete={canDeleteListing?.(listing)}
+          deletingId={deletingId}
+          key={listing.id}
+          listing={listing}
+          onDelete={onDeleteListing}
+        />
       ))}
     </div>
   );
