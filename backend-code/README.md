@@ -38,3 +38,4 @@ DB_SSLMODE=require
 ```
 
 If `DATABASE_URL` is present, Django will use PostgreSQL automatically.
+change
