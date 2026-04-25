@@ -38,6 +38,14 @@ export function Header() {
           className={({ isActive }) =>
             `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
           }
+          to={ROUTES.login}
+        >
+          Log In
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
+          }
           to={ROUTES.signup}
         >
           Sign Up

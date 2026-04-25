@@ -93,10 +93,6 @@ export function SignupPage() {
         <div className="signup-form-heading">
           <p className="eyebrow">Join the marketplace</p>
           <h1 id="signup-form-heading">Create your account</h1>
-          <p>
-            Register with your university details to access the student
-            marketplace.
-          </p>
         </div>
 
         <form className="signup-form" noValidate onSubmit={handleSubmit}>
@@ -191,8 +187,8 @@ export function SignupPage() {
 
         <p className="signup-login-hint">
           Already have an account?{" "}
-          <Link className="signup-inline-link" to={ROUTES.home}>
-            Return home
+          <Link className="signup-inline-link" to={ROUTES.login}>
+            Log in
           </Link>
         </p>
       </section>
