@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { loginUser, persistAuthSession } from "../api/auth";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import { ROUTES } from "../routes/paths";
 import "../styles/login.css";
 
@@ -21,12 +21,17 @@ function validateLoginForm(formData) {
 }
 
 export function LoginPage() {
+  const { isAuthenticated, isAuthReady, login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (isAuthReady && isAuthenticated) {
+    return <Navigate replace to={ROUTES.profile} />;
+  }
 
   function handleChange(event) {
     const { name, type, value, checked } = event.target;
@@ -72,14 +77,9 @@ export function LoginPage() {
     setSubmitError("");
 
     try {
-      const response = await loginUser({
+      const response = await login({
         identifier: formData.identifier.trim(),
         password: formData.password,
-      });
-
-      persistAuthSession({
-        tokens: response.tokens,
-        user: response.user,
         rememberMe: formData.rememberMe,
       });
 

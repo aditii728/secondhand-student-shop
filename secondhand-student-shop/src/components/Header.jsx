@@ -1,9 +1,27 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import logo from "../assets/logo.png";
 import { ROUTES } from "../routes/paths";
 import "../styles/header.css";
 
+function getInitials(user) {
+  const source = user.full_name?.trim() || user.username;
+  return source
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("");
+}
+
 export function Header() {
+  const navigate = useNavigate();
+  const { currentUser, isAuthenticated, logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    navigate(ROUTES.home);
+  }
+
   return (
     <header className="topbar">
       <Link className="brand-lockup" to={ROUTES.home}>
@@ -34,22 +52,44 @@ export function Header() {
         >
           Browse Listings
         </NavLink>
-        <NavLink
-          className={({ isActive }) =>
-            `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
-          }
-          to={ROUTES.login}
-        >
-          Log In
-        </NavLink>
-        <NavLink
-          className={({ isActive }) =>
-            `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
-          }
-          to={ROUTES.signup}
-        >
-          Sign Up
-        </NavLink>
+
+        {isAuthenticated ? (
+          <>
+            <NavLink
+              className={({ isActive }) =>
+                `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
+              }
+              to={ROUTES.profile}
+            >
+              <span className="topnav-avatar" aria-hidden="true">
+                {getInitials(currentUser)}
+              </span>
+              <span>{currentUser.full_name || currentUser.username}</span>
+            </NavLink>
+            <button className="topnav-link topnav-link-cta topnav-link-button" onClick={handleLogout} type="button">
+              Log Out
+            </button>
+          </>
+        ) : (
+          <>
+            <NavLink
+              className={({ isActive }) =>
+                `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
+              }
+              to={ROUTES.login}
+            >
+              Log In
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                `topnav-link topnav-link-cta ${isActive ? "topnav-link-active" : ""}`
+              }
+              to={ROUTES.signup}
+            >
+              Sign Up
+            </NavLink>
+          </>
+        )}
       </nav>
     </header>
   );
