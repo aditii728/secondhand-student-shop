@@ -42,10 +42,6 @@ function validateSignupForm(formData) {
     errors.phoneNumber = "Enter a valid phone number.";
   }
 
-  if (formData.password.length < 8) {
-    errors.password = "Password must be at least 8 characters long.";
-  }
-
   if (formData.confirmPassword !== formData.password) {
     errors.confirmPassword = "Passwords do not match.";
   }

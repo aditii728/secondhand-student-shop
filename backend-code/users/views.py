@@ -6,8 +6,10 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
+from .auth import get_authenticated_user
+from .jwt import create_auth_tokens, decode_token
 from .models import UserProfile
 
 User = get_user_model()
@@ -30,16 +32,34 @@ def normalize_phone_number(phone_number):
     return "".join(allowed_characters)
 
 
-@csrf_exempt
-@require_POST
-def signup(request):
+def parse_json_body(request):
     try:
-        payload = json.loads(request.body or "{}")
+        return json.loads(request.body or "{}"), None
     except json.JSONDecodeError:
-        return JsonResponse(
+        return None, JsonResponse(
             {"message": "Invalid request body.", "errors": {"general": "Send valid JSON."}},
             status=400,
         )
+
+
+def serialize_user(user):
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+    return {
+        "id": user.id,
+        "username": user.username,
+        "full_name": user.get_full_name().strip() or user.username,
+        "email": user.email,
+        "phone_number": profile.phone_number,
+        "university": profile.university,
+    }
+
+
+@csrf_exempt
+@require_POST
+def signup(request):
+    payload, error_response = parse_json_body(request)
+    if error_response:
+        return error_response
 
     username = payload.get("username", "").strip()
     full_name = payload.get("full_name", "").strip()
@@ -117,14 +137,93 @@ def signup(request):
     return JsonResponse(
         {
             "message": "Account created successfully.",
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "full_name": user.get_full_name().strip() or user.username,
-                "email": user.email,
-                "phone_number": profile.phone_number,
-                "university": profile.university,
-            },
+            "user": serialize_user(user),
+            "tokens": create_auth_tokens(user),
         },
         status=201,
     )
+
+
+@csrf_exempt
+@require_POST
+def login(request):
+    payload, error_response = parse_json_body(request)
+    if error_response:
+        return error_response
+
+    identifier = payload.get("identifier", "").strip()
+    password = payload.get("password", "")
+    errors = {}
+
+    if len(identifier) < 3:
+        errors["identifier"] = "Enter your username or email address."
+
+    if errors:
+        return JsonResponse(
+            {"message": "Please correct the highlighted fields.", "errors": errors},
+            status=400,
+        )
+
+    lookup = {"email__iexact": identifier} if "@" in identifier else {"username__iexact": identifier}
+    user = User.objects.filter(**lookup).first()
+
+    if user is None or not user.check_password(password):
+        return JsonResponse(
+            {
+                "message": "Invalid username/email or password.",
+                "errors": {"general": "Invalid username/email or password."},
+            },
+            status=401,
+        )
+
+    return JsonResponse(
+        {
+            "message": "Logged in successfully.",
+            "user": serialize_user(user),
+            "tokens": create_auth_tokens(user),
+        }
+    )
+
+
+@csrf_exempt
+@require_POST
+def refresh_token(request):
+    payload, error_response = parse_json_body(request)
+    if error_response:
+        return error_response
+
+    refresh = payload.get("refresh", "").strip()
+    if not refresh:
+        return JsonResponse(
+            {"message": "Refresh token is required.", "errors": {"refresh": "Refresh token is required."}},
+            status=400,
+        )
+
+    try:
+        token_payload = decode_token(refresh, expected_type="refresh")
+        user = User.objects.get(id=token_payload["sub"])
+    except (ValueError, User.DoesNotExist):
+        return JsonResponse(
+            {"message": "Refresh token is invalid or expired.", "errors": {"refresh": "Invalid refresh token."}},
+            status=401,
+        )
+
+    return JsonResponse(
+        {
+            "message": "Access token refreshed successfully.",
+            "tokens": create_auth_tokens(user),
+        }
+    )
+
+
+@require_GET
+def me(request):
+    try:
+        user = get_authenticated_user(request)
+    except ValueError as exc:
+        return JsonResponse(
+            {"message": str(exc), "errors": {"authorization": str(exc)}},
+            status=401,
+        )
+
+    return JsonResponse({"user": serialize_user(user)})
