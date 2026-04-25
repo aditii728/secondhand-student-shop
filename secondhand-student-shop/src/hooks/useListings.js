@@ -34,5 +34,13 @@ export function useListings() {
     return () => controller.abort();
   }, []);
 
-  return { listings, isLoading, error };
+  function prependListing(listing) {
+    setListings((current) => [listing, ...current]);
+  }
+
+  function removeListing(listingId) {
+    setListings((current) => current.filter((listing) => listing.id !== String(listingId)));
+  }
+
+  return { listings, isLoading, error, prependListing, removeListing };
 }

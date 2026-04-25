@@ -21,8 +21,18 @@ def serialize_listing(request, listing):
         },
         "seller": {
             "id": listing.seller_id,
+            "username": listing.seller.username if listing.seller else "",
             "name": listing.seller_name,
         },
         "created_at": listing.created_at.isoformat(),
         "updated_at": listing.updated_at.isoformat(),
+    }
+
+
+def serialize_category(category):
+    return {
+        "id": category.id,
+        "name": category.name,
+        "slug": category.slug,
+        "description": category.description,
     }

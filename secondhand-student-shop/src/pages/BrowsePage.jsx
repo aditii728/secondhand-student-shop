@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { buildBrowseCategories } from "../api/listings";
+import { buildBrowseCategories, deleteListing } from "../api/listings";
 import { BrowseCategoryScroller } from "../components/browse/BrowseCategoryScroller";
 import { BrowseFilters } from "../components/browse/BrowseFilters";
 import { BrowseListingGrid } from "../components/browse/BrowseListingGrid";
 import { SectionHeading } from "../components/SectionHeading";
+import { useAuth } from "../hooks/useAuth";
 import { useListings } from "../hooks/useListings";
 import "../styles/browse.css";
 import {
@@ -13,11 +14,13 @@ import {
 } from "../utils/browseListings";
 
 export function BrowsePage() {
-  const { listings, isLoading, error } = useListings();
+  const { accessToken, currentUser, isAuthenticated, refreshSession } = useAuth();
+  const { listings, isLoading, error, removeListing } = useListings();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCondition, setSelectedCondition] = useState("All");
   const [sortBy, setSortBy] = useState("latest");
+  const [deletingId, setDeletingId] = useState("");
 
   const browseCategories = useMemo(() => buildBrowseCategories(listings), [listings]);
   const activeSelectedCategory = browseCategories.some(
@@ -40,6 +43,28 @@ export function BrowsePage() {
     activeSelectedCategory === "all"
       ? "All categories"
       : browseCategories.find((category) => category.id === activeSelectedCategory)?.name;
+
+  function canDeleteListing(listing) {
+    return isAuthenticated && currentUser && listing.sellerId === String(currentUser.id);
+  }
+
+  async function handleDeleteListing(listing) {
+    setDeletingId(listing.id);
+
+    try {
+      let token = accessToken;
+      if (!token) {
+        token = await refreshSession();
+      }
+
+      await deleteListing({ accessToken: token, listingId: listing.id });
+      removeListing(listing.id);
+    } catch (deleteError) {
+      window.alert(deleteError.message || "Could not remove listing.");
+    } finally {
+      setDeletingId("");
+    }
+  }
 
   return (
     <main className="browse-page">
@@ -92,7 +117,14 @@ export function BrowsePage() {
             </div>
           </div>
 
-          <BrowseListingGrid error={error} isLoading={isLoading} listings={visibleListings} />
+          <BrowseListingGrid
+            canDeleteListing={canDeleteListing}
+            deletingId={deletingId}
+            error={error}
+            isLoading={isLoading}
+            listings={visibleListings}
+            onDeleteListing={handleDeleteListing}
+          />
         </div>
       </section>
     </main>
