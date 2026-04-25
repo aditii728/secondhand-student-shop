@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./styles/shared.css";
 import { Header } from "./components/Header";
 import { BrowsePage } from "./pages/BrowsePage";
@@ -9,8 +9,12 @@ import { SignupPage } from "./pages/SignupPage";
 import { ROUTES } from "./routes/paths";
 
 function App() {
+  const location = useLocation();
+  const isAuthRoute =
+    location.pathname === ROUTES.login || location.pathname === ROUTES.signup;
+
   return (
-    <div className="app-shell" id="top">
+    <div className={`app-shell ${isAuthRoute ? "app-shell-auth" : ""}`} id="top">
       <Header />
       <Routes>
         <Route element={<HomePage />} path={ROUTES.home} />
