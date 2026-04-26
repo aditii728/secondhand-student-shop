@@ -95,3 +95,62 @@ class ListingMutationTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 403)
+
+
+class ItemListApiTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="item_seller",
+            email="items@example.com",
+            password="secret-pass",
+            first_name="Item",
+            last_name="Seller",
+        )
+        UserProfile.objects.get_or_create(user=self.user)
+        self.category = Category.objects.create(
+            name="Tech & Study",
+            description="Useful electronics and study accessories",
+        )
+        self.active_listing = Listing.objects.create(
+            category=self.category,
+            seller=self.user,
+            title="Wireless Keyboard",
+            price="15.00",
+            condition="Very good",
+            pickup_location="Student union",
+            description="Compact keyboard in great condition.",
+            image_alt="Wireless keyboard on a desk",
+            is_active=True,
+        )
+        Listing.objects.create(
+            category=self.category,
+            seller=self.user,
+            title="Hidden Listing",
+            price="8.00",
+            condition="Good",
+            pickup_location="Library",
+            is_active=False,
+        )
+
+    def test_item_list_returns_only_active_items(self):
+        response = self.client.get(reverse("item-list"))
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["items"]), 1)
+        self.assertEqual(body["items"][0]["title"], "Wireless Keyboard")
+
+    def test_item_list_returns_expected_serialized_fields(self):
+        response = self.client.get(reverse("item-list"))
+
+        self.assertEqual(response.status_code, 200)
+        item = response.json()["items"][0]
+        self.assertEqual(item["id"], self.active_listing.id)
+        self.assertEqual(item["category"]["name"], "Tech & Study")
+        self.assertEqual(item["seller"]["id"], self.user.id)
+        self.assertEqual(item["seller"]["username"], "item_seller")
+        self.assertEqual(item["seller"]["name"], "Item Seller")
+        self.assertEqual(item["condition"], "Very good")
+        self.assertEqual(item["pickup_location"], "Student union")
+        self.assertEqual(item["description"], "Compact keyboard in great condition.")

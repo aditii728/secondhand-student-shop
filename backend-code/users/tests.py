@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from .jwt import decode_token
 from .models import UserProfile
-from .signals import create_user_profile, ensure_user_profile
+from .signals import ensure_user_profile
 
 User = get_user_model()
 
@@ -41,9 +41,7 @@ class SignupViewTests(TestCase):
         self.assertEqual(decode_token(body["tokens"]["access"], expected_type="access")["sub"], str(user.id))
 
     def test_signup_still_succeeds_without_profile_signals(self):
-        post_save.disconnect(create_user_profile, sender=User)
         post_save.disconnect(ensure_user_profile, sender=User)
-        self.addCleanup(post_save.connect, create_user_profile, sender=User)
         self.addCleanup(post_save.connect, ensure_user_profile, sender=User)
 
         response = self.client.post(
@@ -55,6 +53,59 @@ class SignupViewTests(TestCase):
         self.assertEqual(response.status_code, 201)
         user = User.objects.get(username="student_one")
         self.assertTrue(UserProfile.objects.filter(user=user).exists())
+
+    def test_signup_rejects_invalid_json(self):
+        response = self.client.post(
+            self.url,
+            data="{bad json",
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["errors"]["general"], "Send valid JSON.")
+
+    def test_signup_rejects_duplicate_username_and_email(self):
+        User.objects.create_user(
+            username="student_one",
+            email="student@example.com",
+            password="existing-password",
+        )
+
+        response = self.client.post(
+            self.url,
+            data=json.dumps(self.payload),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        body = response.json()
+        self.assertEqual(body["errors"]["username"], "That username is already taken.")
+        self.assertEqual(body["errors"]["email"], "That email is already registered.")
+
+    def test_signup_rejects_invalid_fields(self):
+        response = self.client.post(
+            self.url,
+            data=json.dumps(
+                {
+                    "username": "x",
+                    "full_name": "A",
+                    "email": "not-an-email",
+                    "password": "123456789",
+                    "university": "",
+                    "phone_number": "12",
+                }
+            ),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        body = response.json()
+        self.assertIn("username", body["errors"])
+        self.assertIn("full_name", body["errors"])
+        self.assertIn("email", body["errors"])
+        self.assertIn("university", body["errors"])
+        self.assertIn("phone_number", body["errors"])
+        self.assertIn("password", body["errors"])
 
 
 class JwtAuthTests(TestCase):
@@ -93,6 +144,32 @@ class JwtAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    def test_login_rejects_short_identifier(self):
+        response = self.client.post(
+            reverse("login"),
+            data=json.dumps({"identifier": "ab", "password": "secure-password-123"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json()["errors"]["identifier"],
+            "Enter your username or email address.",
+        )
+
+    def test_login_rejects_invalid_credentials(self):
+        response = self.client.post(
+            reverse("login"),
+            data=json.dumps({"identifier": "auth_student", "password": "wrong-password"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(
+            response.json()["errors"]["general"],
+            "Invalid username/email or password.",
+        )
+
     def test_me_requires_valid_bearer_token(self):
         login_response = self.client.post(
             reverse("login"),
@@ -108,6 +185,15 @@ class JwtAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["user"]["username"], "auth_student")
+
+    def test_me_rejects_missing_bearer_token(self):
+        response = self.client.get(reverse("me"))
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(
+            response.json()["errors"]["authorization"],
+            "Authentication credentials were not provided.",
+        )
 
     def test_refresh_returns_new_tokens(self):
         login_response = self.client.post(
@@ -125,3 +211,16 @@ class JwtAuthTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("tokens", response.json())
+
+    def test_refresh_rejects_invalid_token(self):
+        response = self.client.post(
+            reverse("refresh-token"),
+            data=json.dumps({"refresh": "not-a-real-token"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(
+            response.json()["errors"]["refresh"],
+            "Invalid refresh token.",
+        )
