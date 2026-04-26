@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.test import TestCase
 
 from .models import UserProfile
-from .signals import create_user_profile, ensure_user_profile
+from .signals import ensure_user_profile
 
 User = get_user_model()
 
@@ -18,9 +18,7 @@ class UserAdminTests(TestCase):
         self.client.force_login(self.admin_user)
 
     def test_change_page_loads_even_if_profile_is_missing(self):
-        post_save.disconnect(create_user_profile, sender=User)
         post_save.disconnect(ensure_user_profile, sender=User)
-        self.addCleanup(post_save.connect, create_user_profile, sender=User)
         self.addCleanup(post_save.connect, ensure_user_profile, sender=User)
 
         target_user = User.objects.create_user(
